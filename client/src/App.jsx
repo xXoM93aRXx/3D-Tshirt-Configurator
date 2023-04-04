@@ -10,7 +10,6 @@ const App = () => {
       <Home/>
       <Customizer/>
       <Canvas/>
-
     </main>
   )
 }
