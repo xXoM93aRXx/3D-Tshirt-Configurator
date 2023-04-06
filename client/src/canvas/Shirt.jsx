@@ -11,15 +11,47 @@ const Shirt = () => {
 
   const logoTexture = useTexture(snap.logoDecal)
   const fullTexture = useTexture(snap.fullDecal)
+  //For easing color application
+  useFrame((state,delta)=> easing.dampC(materials.lambert1.color,snap.color,0.25,delta))
+
+  //To update the color quick time 
+  const stateString =JSON.stringify(snap)
   return (
-    <group>
+    <group
+    //The key is applied here to make react update the model whenever the model is changed
+      key={stateString}
+    >
       <mesh
         castShadow
         geometry={nodes.T_Shirt_male.geometry}
         material={materials.lambert1}
         material-roughness={1}
         dispose={null}
-      ></mesh>
+      >
+
+        {/* Checks if the full texture is enabled */}
+        {snap.isFullTexture && (
+          <Decal
+          position={[0,0,0]}
+          rotation={[0,0,0]}
+          scale={1}
+          map={fullTexture}
+          />
+        )}
+        {/* Checks if the logo is enabled */}
+        {snap.isLogoTexture && (
+          <Decal
+          position={[0,0.04,0.15]}
+          rotation={[0,0,0]}
+          scale={0.15}
+          map={logoTexture}
+          map-anisotrop={16}
+          depthWrite ={true}
+          depthTest ={false}
+          />
+        )}
+
+      </mesh>
     </group>
   )
 }
