@@ -12,6 +12,32 @@ import { CustomButton, AIPicker, ColorPicker, FilePicker, Tab } from '../compone
 
 const Customizer = () => {
   const snap = useSnapshot(state)
+
+  const [file, setFile] = useState('')   //This is a state for the file
+  const [prompt, setPrompt] = useState('')  //Ai prompt state
+  const [generatingImg, setGeneratingImg] = useState(false) //This will control the loading state of the image
+  const [activeEditorTab, setActiveEditorTab] = useState("") //This checks the active editor tab
+  const [activeFilterTab, setActiveFilterTab] = useState({
+    logoShirt: true,
+    stylishShirt: false,
+  }) //This checks the active filter tab
+
+
+  //Show the tab content depending on the active tab. 
+  //===============================================//
+  //How this works is that it will be a switch statement that always looks for the active editor tab and returns the component that is relevant to the case
+  const generateTabContent = ()=>{
+    switch (activeEditorTab) {
+      case "colorpicker":
+        return <ColorPicker/>
+      case "filepicker":
+        return <FilePicker/>
+      case "aipicker":
+        return <AIPicker/>
+      default:
+        return null;
+    }
+  }
   return (
     <AnimatePresence>
       {!snap.intro &&(
@@ -21,7 +47,9 @@ const Customizer = () => {
           className='absolute top-0 left-0 z-10' {...slideAnimation('left')}>
             <div className="flex items-center min-h-screen">
               <div className="editortabs-container tabs">
-                {EditorTabs.map((tab)=>(<Tab key={tab.name} tab={tab} handleClick={()=>{}}/>))}
+                {/*The handle click over here sets the active tab to the tab name so that generate tab content function works accordingly */}
+                {EditorTabs.map((tab)=>(<Tab key={tab.name} tab={tab} handleClick={()=>setActiveEditorTab(tab.name)}/>))}
+                {generateTabContent()}
               </div>
             </div>
           </motion.div>
