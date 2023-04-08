@@ -52,6 +52,22 @@ const Customizer = () => {
     if(!prompt) return alert ("Please enter a prompt")
     try {
       //Call our backend to generate an image
+      //This will set the loader to true
+      setGeneratingImg(true)
+      
+      //Gets the response by fetching the backend URL 
+      const response =await fetch(config.development.backendUrl,{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify({prompt})
+      })
+
+      const data = await response.json();
+
+      handleDecals(type,`data:image/png;base64,${data.photo}`)
+
     } catch (error) {
       alert(error)
     }finally{
@@ -135,6 +151,13 @@ const handleActiveFilterTab = (tabName)=>{
             {FilterTabs.map((tab)=>(
               <Tab key={tab.name} tab={tab} isFilterTab isActiveTab={activeFilterTab[tab.name]} handleClick={()=>handleActiveFilterTab(tab.name)}/>
             ))}
+              <button className='download-btn' onClick={downloadCanvasToImage}>
+              <img
+                src={download}
+                alt='download_image'
+                className='w-3/5 h-3/5 object-contain'
+              />
+            </button>
           </motion.div>
         </>
       )}
