@@ -31,13 +31,64 @@ const Customizer = () => {
       case "colorpicker":
         return <ColorPicker/>
       case "filepicker":
-        return <FilePicker/>
+        return <FilePicker
+          file={file}
+          setFile={setFile}
+          readFile={readFile}
+        />
       case "aipicker":
         return <AIPicker/>
       default:
         return null;
     }
   }
+
+
+//This function reads the file it fires the handle decals function 
+const readFile = (type)=>{
+  reader(file).then((result)=>{
+    handleDecals(type,result);
+    setActiveEditorTab("")
+  })
+}
+
+//The handle decals function decides if it a full texture or a logo
+const handleDecals = (type,result) =>{
+  const decalType = DecalTypes[type];
+  state[decalType.stateProperty]=result;
+  //This checks if this decal is currently active
+  if(!activeFilterTab[decalType.filterTab]) {
+    handleActiveFilterTab(decalType.filterTab)
+  }
+}
+
+//This function helps to know if the logo is on or not and if the texture is on or not or even both
+const handleActiveFilterTab = (tabName)=>{
+  switch (tabName) {
+    case "logoShirt":
+      //This toggles it on or off
+      state.isLogoTexture = !activeFilterTab[tabName]
+      break;
+    case "stylishShirt":
+      //This toggles it on or off
+      state.isFullTexture = !activeFilterTab[tabName]
+      break;
+  
+    default:
+      state.isFullTexture = false;
+      state.isLogoTexture = true;
+  }
+
+
+  //This updates the activeFilterTabs after setting the state
+
+  setActiveFilterTab((prevState)=>{
+    return{
+      ...prevState,
+      [tabName]:!prevState[tabName]
+    }
+  })
+}
   return (
     <AnimatePresence>
       {!snap.intro &&(
@@ -65,7 +116,7 @@ const Customizer = () => {
             {...slideAnimation('up')}
           >
             {FilterTabs.map((tab)=>(
-              <Tab key={tab.name} tab={tab} isFilterTab isActiveTab="" handleClick={()=>{}}/>
+              <Tab key={tab.name} tab={tab} isFilterTab isActiveTab={activeFilterTab[tab.name]} handleClick={()=>handleActiveFilterTab(tab.name)}/>
             ))}
           </motion.div>
         </>
